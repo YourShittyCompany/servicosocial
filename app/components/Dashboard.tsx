@@ -26,7 +26,7 @@ export default function Dashboard() {
 
       <div className="white h-1/2 bg-white p-0 relative">
         <div className="coming_soon w-[85%] ml-[5%] absolute top-[-8px] text-[#0d9488] font-['Josefin_Slab'] text-[160px] md:text-[160px] sm:text-[72px] sm:top-[-4px] z-10">
-          MENTE
+          MENTEE
           {blinkingDots}
         </div>
       </div>
