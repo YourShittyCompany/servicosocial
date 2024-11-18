@@ -62,6 +62,15 @@ const RegionCard = ({ point, isSelected, onClick }: {
 export default function Dashboard() {
   const pointsData = useMemo<PointData[]>(() => [
     {
+      name: 'Portugal',
+      lat: 39.5,
+      lng: -8,
+      workers: 15000,
+      color: '#DC143C',
+      size: 0.5,
+      imgUrl: '/ptpi.png'
+    },
+    {
       name: 'América do Norte',
       lat: 40,
       lng: -100,
