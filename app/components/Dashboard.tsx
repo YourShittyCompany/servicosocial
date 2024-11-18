@@ -328,9 +328,11 @@ export default function Dashboard() {
         <>
           <button 
             onClick={() => {
-              setIsMenuOpen(!isMenuOpen);
-              if (!isMenuOpen) {
+              if (showingPortugalCities) {
                 setShowingPortugalCities(false);
+                setSelectedRegion('Portugal');
+              } else {
+                setIsMenuOpen(!isMenuOpen);
               }
             }}
             className="fixed top-2 right-2 z-50 p-2 sm:p-3 rounded-md hover:bg-[#f0eae3] transition-colors duration-300 bg-white shadow-md md:top-4 md:right-4"
@@ -355,10 +357,10 @@ export default function Dashboard() {
             <div className="h-full flex flex-col">
               <div className="p-3 sm:p-4 md:p-6 border-b border-gray-100">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#2E8B57]">
-                  {showingPortugalCities ? 'Cidades de Portugal' : 'Assistentes Sociais'}
+                  {showingPortugalCities ? 'Universidades' : 'Assistentes Sociais'}
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">
-                  {showingPortugalCities ? 'Distribuição por cidade em Portugal' : 'Distribuição global de assistentes sociais.'}
+                  {showingPortugalCities ? 'Universidades com curso de Serviço Social' : 'Distribuição global de assistentes sociais.'}
                 </p>
               </div>
               
