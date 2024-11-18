@@ -5,16 +5,18 @@ O Portal dos Assistentes de Serviço Social é uma plataforma online dedicada ex
 ### Características Principais
 
 - Interface intuitiva e moderna com design responsivo
-- Sistema de autenticação e perfis de utilizador
-- Área de recursos e documentação profissional
-- Fórum de discussão para a comunidade
-- Calendário de eventos e formações
-- Blog com artigos especializados
-- Diretório de profissionais
+- Sistema de autenticação e perfis de utilizador personalizáveis
+- Área de recursos e documentação profissional atualizada
+- Fórum de discussão interativo para a comunidade
+- Calendário de eventos, formações e webinars
+- Blog com artigos especializados e casos de estudo
+- Diretório de profissionais com pesquisa avançada
+- Sistema de mensagens privadas entre utilizadores
+- Área de ofertas de emprego na área social
 
 ### Tecnologias Utilizadas
 
-- Next.js 13 com App Router
+- Next.js 14 com App Router
 - React 18
 - Tailwind CSS
 - TypeScript
@@ -22,28 +24,35 @@ O Portal dos Assistentes de Serviço Social é uma plataforma online dedicada ex
 - PostgreSQL
 - NextAuth.js
 - Vercel
+- tRPC
+- Zod
+- React Query
 
 ### Estado Atual
 
-O portal encontra-se em fase beta com as seguintes funcionalidades implementadas:
-- Sistema de autenticação completo
-- Perfis de utilizador básicos
-- Layout responsivo principal
-- Estrutura inicial do fórum
-- Base de dados configurada
+O portal encontra-se em fase de produção com as seguintes funcionalidades implementadas:
+- Sistema de autenticação completo com múltiplos providers
+- Perfis de utilizador detalhados com personalização
+- Layout responsivo otimizado
+- Fórum de discussão funcional
+- Base de dados otimizada e indexada
+- Sistema de blog implementado
+- API RESTful documentada
 
 ### Próximos Passos
 
-- Implementação do sistema de blog
-- Desenvolvimento do fórum de discussão
-- Criação do diretório de profissionais
-- Sistema de notificações
-- Área de recursos e documentação
+- Implementação de chat em tempo real
+- Sistema de mentoria entre profissionais
+- Integração com plataformas de formação online
+- Desenvolvimento de app mobile
+- Sistema de certificados digitais
+- Marketplace de recursos profissionais
 
 ### Objetivos
 
-- Criar uma comunidade profissional forte e unida
-- Disponibilizar recursos e ferramentas atualizadas
-- Promover o desenvolvimento profissional contínuo
-- Facilitar a partilha de conhecimentos e experiências
-- Melhorar a visibilidade da profissão em Portugal
+- Criar uma comunidade profissional forte, unida e colaborativa
+- Disponibilizar recursos e ferramentas atualizadas e relevantes
+- Promover o desenvolvimento profissional contínuo através de formação
+- Facilitar a partilha de conhecimentos e experiências práticas
+- Melhorar a visibilidade e reconhecimento da profissão em Portugal
+- Fomentar a inovação nas práticas de serviço social

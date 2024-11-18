@@ -14,6 +14,15 @@ interface PointData {
   color: string;
   size: number;
   imgUrl: string;
+  cities?: CityData[];
+}
+
+interface CityData {
+  name: string;
+  workers: number;
+  imgUrl: string;
+  lat: number;
+  lng: number;
 }
 
 interface GlobeElement {
@@ -27,7 +36,7 @@ interface GlobeElement {
 }
 
 const RegionCard = ({ point, isSelected, onClick }: { 
-  point: PointData; 
+  point: PointData | CityData; 
   isSelected: boolean; 
   onClick: () => void;
 }) => (
@@ -68,7 +77,31 @@ export default function Dashboard() {
       workers: 15000,
       color: '#DC143C',
       size: 0.5,
-      imgUrl: '/ptpi.png'
+      imgUrl: '/ptpi.png',
+      cities: [
+        {
+          name: 'Lisboa',
+          workers: 5000,
+          imgUrl: '/btpi.png',
+          size: 0.5,
+          lat: 38.7223,
+          lng: -9.1393
+        },
+        {
+          name: 'Porto',
+          workers: 3500,
+          imgUrl: '/pcpi.png',
+          lat: 41.1579,
+          lng: -8.6291
+        },
+        {
+          name: 'Coimbra',
+          workers: 2000,
+          imgUrl: '/ccpi.png',
+          lat: 40.2033,
+          lng: -8.4103
+        }
+      ]
     },
     {
       name: 'América do Norte',
@@ -130,6 +163,7 @@ export default function Dashboard() {
   const [landPolygons, setLandPolygons] = useState<Feature<Geometry>[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [showingPortugalCities, setShowingPortugalCities] = useState(false);
   const globeRef = useRef<GlobeElement | null>(null);
 
   useEffect(() => {
@@ -208,6 +242,20 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (globeRef.current && selectedRegion) {
+      const portugalData = pointsData.find(point => point.name === 'Portugal');
+      
+      if (showingPortugalCities && portugalData?.cities) {
+        const selectedCity = portugalData.cities.find(city => city.name === selectedRegion);
+        if (selectedCity) {
+          globeRef.current.pointOfView({
+            lat: selectedCity.lat,
+            lng: selectedCity.lng,
+            altitude: 0.5
+          });
+          return;
+        }
+      }
+
       const selectedPoint = pointsData.find(point => point.name === selectedRegion);
       if (selectedPoint) {
         const width = window.innerWidth;
@@ -223,7 +271,7 @@ export default function Dashboard() {
         });
       }
     }
-  }, [selectedRegion, pointsData]);
+  }, [selectedRegion, pointsData, showingPortugalCities]);
 
   const htmlElement = (d: object): HTMLElement => {
     const point = d as PointData;
@@ -247,10 +295,23 @@ export default function Dashboard() {
     
     el.addEventListener('click', () => {
       setSelectedRegion(point.name);
+      if (point.name === 'Portugal') {
+        setShowingPortugalCities(true);
+      } else {
+        setShowingPortugalCities(false);
+      }
       setIsMenuOpen(true);
     });
     
     return el;
+  };
+
+  const getGlobePoints = () => {
+    if (showingPortugalCities) {
+      const portugalData = pointsData.find(point => point.name === 'Portugal');
+      return portugalData?.cities || [];
+    }
+    return pointsData;
   };
 
   if (isLoading) {
@@ -266,7 +327,12 @@ export default function Dashboard() {
       {!isLoading && (
         <>
           <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+              if (!isMenuOpen) {
+                setShowingPortugalCities(false);
+              }
+            }}
             className="fixed top-2 right-2 z-50 p-2 sm:p-3 rounded-md hover:bg-[#f0eae3] transition-colors duration-300 bg-white shadow-md md:top-4 md:right-4"
             aria-label="Abrir menu"
           >
@@ -278,27 +344,50 @@ export default function Dashboard() {
           {isMenuOpen && (
             <div 
               className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => {
+                setIsMenuOpen(false);
+                setShowingPortugalCities(false);
+              }}
             />
           )}
 
           <div className={`fixed top-0 right-0 h-full bg-white shadow-xl transition-transform duration-300 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} z-40 w-full sm:w-72 md:w-80 overflow-hidden`}>
             <div className="h-full flex flex-col">
               <div className="p-3 sm:p-4 md:p-6 border-b border-gray-100">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#2E8B57]">Assistentes Sociais</h2>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">Distribuição global de assistentes sociais.</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#2E8B57]">
+                  {showingPortugalCities ? 'Cidades de Portugal' : 'Assistentes Sociais'}
+                </h2>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">
+                  {showingPortugalCities ? 'Distribuição por cidade em Portugal' : 'Distribuição global de assistentes sociais.'}
+                </p>
               </div>
               
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {pointsData.map((point) => (
-                    <RegionCard
-                      key={point.name}
-                      point={point}
-                      isSelected={selectedRegion === point.name}
-                      onClick={() => setSelectedRegion(point.name)}
-                    />
-                  ))}
+                  {showingPortugalCities ? 
+                    pointsData.find(p => p.name === 'Portugal')?.cities?.map((city) => (
+                      <RegionCard
+                        key={city.name}
+                        point={city}
+                        isSelected={selectedRegion === city.name}
+                        onClick={() => setSelectedRegion(city.name)}
+                      />
+                    ))
+                    :
+                    pointsData.map((point) => (
+                      <RegionCard
+                        key={point.name}
+                        point={point}
+                        isSelected={selectedRegion === point.name}
+                        onClick={() => {
+                          setSelectedRegion(point.name);
+                          if (point.name === 'Portugal') {
+                            setShowingPortugalCities(true);
+                          }
+                        }}
+                      />
+                    ))
+                  }
                 </div>
               </div>
 
@@ -326,7 +415,7 @@ export default function Dashboard() {
               polygonsData={landPolygons}
               polygonCapColor={() => '#ffffff00'}
               polygonSideColor={() => '#ffffff00'}
-              htmlElementsData={pointsData}
+              htmlElementsData={getGlobePoints()}
               htmlElement={htmlElement}
               htmlLat="lat"
               htmlLng="lng"
