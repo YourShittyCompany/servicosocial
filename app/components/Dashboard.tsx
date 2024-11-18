@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, MutableRefObject, useMemo } from 'react';
+import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import Globe, { GlobeMethods } from 'react-globe.gl';
 import { feature } from 'topojson-client';
 import { Feature, Geometry } from 'geojson';
@@ -60,7 +60,7 @@ const RegionCard = ({ point, isSelected, onClick }: {
 );
 
 export default function Dashboard() {
-  const pointsData = useMemo<PointData[]>(() => [
+  const pointsData: PointData[] = [
     {
       name: 'América do Norte',
       lat: 40,
@@ -115,45 +115,33 @@ export default function Dashboard() {
       size: 0.7,
       imgUrl: '/aupi.png'
     }
-  ], []);
+  ];
 
   const [isLoading, setIsLoading] = useState(true);
   const [landPolygons, setLandPolygons] = useState<Feature<Geometry>[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const globeRef = useRef<GlobeElement | null>(null);
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  // Função para calcular o tamanho baseado na largura da janela
-  const calculateSize = (width: number) => {
-    if (width === 0) return 20; // valor padrão
-    return width < 480 ? 16 : 
-           width < 768 ? 18 : 
-           width < 1024 ? 20 : 
-           24;
-  };
-
-  // Função para calcular a altitude baseada na largura da janela
-  const calculateAltitude = (width: number) => {
-    if (width === 0) return 2.5; // valor padrão
-    return width < 480 ? 4 : 
-           width < 768 ? 3.5 : 
-           width < 1024 ? 3 : 
-           2.5;
-  };
-
-  // Efeito para inicializar e atualizar o tamanho da janela
   useEffect(() => {
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
+      const width = window.innerWidth;
+      
+      if (globeRef.current) {
+        const altitude = width < 480 ? 4 : 
+                        width < 768 ? 3.5 : 
+                        width < 1024 ? 3 : 
+                        2.5;
+        
+        globeRef.current.pointOfView({ 
+          lat: 0,
+          lng: 0,
+          altitude 
+        });
+      }
     };
 
-    // Inicialização
     handleResize();
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -169,22 +157,15 @@ export default function Dashboard() {
       .then((landTopo) => {
         if (!landTopo || !landTopo.objects || !landTopo.objects.land) {
           throw new Error('Dados do mapa inválidos');
-          return;
         }
         
-        try {
-          const features = feature(landTopo, landTopo.objects.land);
-          if (!features) {
-            throw new Error('Falha ao processar features do mapa');
-            return;
-          }
-          
-          setLandPolygons(Array.isArray(features) ? features : [features]);
-        } catch (error) {
-          console.error('Erro ao processar dados do mapa:', error);
-        } finally {
-          setIsLoading(false);
+        const features = feature(landTopo, landTopo.objects.land);
+        if (!features) {
+          throw new Error('Falha ao processar features do mapa');
         }
+        
+        setLandPolygons(Array.isArray(features) ? features : [features]);
+        setIsLoading(false);
       })
       .catch(error => {
         console.error('Erro ao carregar mapa:', error);
@@ -192,9 +173,8 @@ export default function Dashboard() {
       });
   }, []);
 
-  // Efeito para configurar o Globe após a montagem
   useEffect(() => {
-    if (globeRef.current && windowSize.width > 0) {
+    if (globeRef.current) {
       const globe = globeRef.current;
       
       const controls = globe.controls();
@@ -203,33 +183,48 @@ export default function Dashboard() {
       controls.enableRotate = true;
       controls.enablePan = false;
       
+      const width = window.innerWidth;
+      const altitude = width < 480 ? 4 : 
+                      width < 768 ? 3.5 : 
+                      width < 1024 ? 3 : 
+                      2.5;
+      
       globe.pointOfView({ 
         lat: 0,
         lng: 0,
-        altitude: calculateAltitude(windowSize.width)
+        altitude
       });
     }
-  }, [windowSize.width]);
+  }, []);
 
-  // Efeito para atualizar a visualização quando uma região é selecionada
   useEffect(() => {
-    if (globeRef.current && selectedRegion && windowSize.width > 0) {
+    if (globeRef.current && selectedRegion) {
       const selectedPoint = pointsData.find(point => point.name === selectedRegion);
       if (selectedPoint) {
+        const width = window.innerWidth;
+        const altitude = width < 480 ? 3 : 
+                        width < 768 ? 2.5 : 
+                        width < 1024 ? 2 : 
+                        1.5;
+        
         globeRef.current.pointOfView({
           lat: selectedPoint.lat,
           lng: selectedPoint.lng,
-          altitude: calculateAltitude(windowSize.width) * 0.6
+          altitude
         });
       }
     }
-  }, [selectedRegion, pointsData, windowSize.width]);
+  }, [selectedRegion, pointsData]);
 
   const htmlElement = (d: object): HTMLElement => {
     const point = d as PointData;
     const el = document.createElement('div');
     
-    const size = calculateSize(windowSize.width);
+    const width = window.innerWidth;
+    const size = width < 480 ? 16 : 
+                 width < 768 ? 18 : 
+                 width < 1024 ? 20 : 
+                 24;
     
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
@@ -249,13 +244,17 @@ export default function Dashboard() {
     return el;
   };
 
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-[#f5f5f1] flex items-center justify-center">
+        <div className="text-lg sm:text-xl md:text-2xl text-gray-600">Carregando...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full m-0 overflow-hidden relative bg-[#f5f5f1] flex flex-col items-center justify-between">
-      {isLoading || windowSize.width === 0 ? (
-        <div className="h-screen bg-[#f5f5f1] flex items-center justify-center">
-          <div className="text-lg sm:text-xl md:text-2xl text-gray-600">Carregando...</div>
-        </div>
-      ) : (
+      {!isLoading && (
         <>
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
