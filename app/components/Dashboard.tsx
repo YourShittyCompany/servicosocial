@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react';
-import Globe from 'react-globe.gl';
+import { useState, useEffect, useRef, MutableRefObject } from 'react';
+import Globe, { GlobeMethods } from 'react-globe.gl';
 import { feature } from 'topojson-client';
-import { GeoJsonProperties } from 'geojson';
+import { Feature, Geometry } from 'geojson';
 
 interface PointData {
   name: string;
@@ -13,11 +13,6 @@ interface PointData {
   color: string;
   size: number;
   imgUrl: string;
-}
-
-interface WindowSize {
-  width: number;
-  height: number;
 }
 
 interface GlobeElement {
@@ -89,29 +84,20 @@ export default function Dashboard() {
   ];
 
   const [isLoading, setIsLoading] = useState(true);
-  const [landPolygons, setLandPolygons] = useState<GeoJSON.Feature[]>([]);
-  const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0
-  });
+  const [landPolygons, setLandPolygons] = useState<Feature<Geometry>[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const globeRef = useRef<GlobeElement | null>(null);
 
-  // Atualiza o tamanho da janela e ajusta o globo para dispositivos móveis
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      const height = window.innerHeight;
-      
-      setWindowSize({ width, height });
       
       if (globeRef.current) {
-        // Ajusta altitude baseado no tamanho da tela
-        const altitude = width < 480 ? 4 : // Telefones
-                        width < 768 ? 3.5 : // Tablets pequenos
-                        width < 1024 ? 3 : // Tablets grandes
-                        2.5; // Desktop
+        const altitude = width < 480 ? 4 : 
+                        width < 768 ? 3.5 : 
+                        width < 1024 ? 3 : 
+                        2.5;
         
         globeRef.current.pointOfView({ 
           lat: 0,
@@ -134,9 +120,10 @@ export default function Dashboard() {
         }
         return res.json();
       })
-      .then(landTopo => {
-        const features = feature(landTopo, landTopo.objects.land) as unknown as { features: GeoJSON.Feature<any, GeoJsonProperties>[] };
-        setLandPolygons(features.features);
+      .then((landTopo) => {
+        const result = feature(landTopo, landTopo.objects.land);
+        const features = Array.isArray(result) ? result : [result];
+        setLandPolygons(features);
         setIsLoading(false);
       })
       .catch(error => {
@@ -149,14 +136,12 @@ export default function Dashboard() {
     if (globeRef.current) {
       const globe = globeRef.current;
       
-      // Configura controles otimizados para touch
       const controls = globe.controls();
       controls.enabled = true;
       controls.enableZoom = true;
       controls.enableRotate = true;
       controls.enablePan = false;
       
-      // Ajusta sensibilidade do touch
       const width = window.innerWidth;
       const altitude = width < 480 ? 4 : 
                       width < 768 ? 3.5 : 
@@ -190,21 +175,20 @@ export default function Dashboard() {
     }
   }, [selectedRegion]);
 
-  const htmlElement = (d: any): HTMLElement => {
+  const htmlElement = (d: object): HTMLElement => {
     const point = d as PointData;
     const el = document.createElement('div');
     
-    // Ajusta tamanho dos ícones para diferentes dispositivos
     const width = window.innerWidth;
-    const size = width < 480 ? 16 : // Telefones
-                 width < 768 ? 18 : // Tablets pequenos
-                 width < 1024 ? 20 : // Tablets grandes
-                 24; // Desktop
+    const size = width < 480 ? 16 : 
+                 width < 768 ? 18 : 
+                 width < 1024 ? 20 : 
+                 24;
     
     el.innerHTML = `<img src="${point.imgUrl}" style="width: ${size}px; height: ${size}px;" alt="${point.name}" />`;
     el.style.pointerEvents = 'auto';
     el.style.cursor = 'pointer';
-    el.style.touchAction = 'manipulation'; // Melhora resposta ao toque
+    el.style.touchAction = 'manipulation';
     el.addEventListener('click', () => {
       setSelectedRegion(point.name);
       setIsMenuOpen(true);
@@ -291,7 +275,7 @@ export default function Dashboard() {
               BREVEMENTE
             </div>
             <Globe
-              ref={globeRef}
+              ref={globeRef as MutableRefObject<GlobeMethods>}
               backgroundColor="rgba(0,0,0,0)"
               showGlobe={false}
               showAtmosphere={false}
