@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef, MutableRefObject } from 'react';
+import { useState, useEffect, useRef, MutableRefObject, useMemo } from 'react';
 import Globe, { GlobeMethods } from 'react-globe.gl';
 import { feature } from 'topojson-client';
 import { Feature, Geometry } from 'geojson';
+import Image from 'next/image';
 
 interface PointData {
   name: string;
@@ -25,8 +26,41 @@ interface GlobeElement {
   };
 }
 
+const RegionCard = ({ point, isSelected, onClick }: { 
+  point: PointData; 
+  isSelected: boolean; 
+  onClick: () => void;
+}) => (
+  <div 
+    className={`group hover:bg-gray-50 p-2 sm:p-3 rounded-lg transition-colors duration-200 cursor-pointer ${
+      isSelected ? 'bg-gray-50 ring-2 ring-[#2E8B57]' : ''
+    }`}
+    onClick={onClick}
+  >
+    <div className="flex items-center space-x-3 sm:space-x-4">
+      <div className="flex-shrink-0">
+        <Image 
+          src={point.imgUrl}
+          alt={point.name} 
+          width={32}
+          height={32}
+          className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 object-contain"
+        />
+      </div>
+      <div className="flex-1">
+        <h3 className="font-medium text-gray-900 group-hover:text-[#2E8B57] transition-colors duration-200 text-xs sm:text-sm md:text-base">
+          {point.name}
+        </h3>
+        <p className="text-gray-500 text-xs mt-0.5 sm:mt-1">
+          {point.workers.toLocaleString()} assistentes sociais.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
 export default function Dashboard() {
-  const pointsData: PointData[] = [
+  const pointsData = useMemo<PointData[]>(() => [
     {
       name: 'América do Norte',
       lat: 40,
@@ -81,7 +115,7 @@ export default function Dashboard() {
       size: 0.7,
       imgUrl: '/aupi.png'
     }
-  ];
+  ], []);
 
   const [isLoading, setIsLoading] = useState(true);
   const [landPolygons, setLandPolygons] = useState<Feature<Geometry>[]>([]);
@@ -121,10 +155,24 @@ export default function Dashboard() {
         return res.json();
       })
       .then((landTopo) => {
-        const result = feature(landTopo, landTopo.objects.land);
-        const features = Array.isArray(result) ? result : [result];
-        setLandPolygons(features);
-        setIsLoading(false);
+        if (!landTopo || !landTopo.objects || !landTopo.objects.land) {
+          throw new Error('Dados do mapa inválidos');
+          return;
+        }
+        
+        try {
+          const features = feature(landTopo, landTopo.objects.land);
+          if (!features) {
+            throw new Error('Falha ao processar features do mapa');
+            return;
+          }
+          
+          setLandPolygons(Array.isArray(features) ? features : [features]);
+        } catch (error) {
+          console.error('Erro ao processar dados do mapa:', error);
+        } finally {
+          setIsLoading(false);
+        }
       })
       .catch(error => {
         console.error('Erro ao carregar mapa:', error);
@@ -173,7 +221,7 @@ export default function Dashboard() {
         });
       }
     }
-  }, [selectedRegion]);
+  }, [selectedRegion, pointsData]);
 
   const htmlElement = (d: object): HTMLElement => {
     const point = d as PointData;
@@ -185,28 +233,31 @@ export default function Dashboard() {
                  width < 1024 ? 20 : 
                  24;
     
-    el.innerHTML = `<img src="${point.imgUrl}" style="width: ${size}px; height: ${size}px;" alt="${point.name}" />`;
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+    el.style.backgroundImage = `url(${point.imgUrl})`;
+    el.style.backgroundSize = 'contain';
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.backgroundPosition = 'center';
     el.style.pointerEvents = 'auto';
     el.style.cursor = 'pointer';
     el.style.touchAction = 'manipulation';
+    
     el.addEventListener('click', () => {
       setSelectedRegion(point.name);
       setIsMenuOpen(true);
     });
+    
     return el;
   };
 
-  if (isLoading) {
-    return (
-      <div className="h-screen bg-[#f5f5f1] flex items-center justify-center">
-        <div className="text-lg sm:text-xl md:text-2xl text-gray-600">Carregando...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen w-full m-0 overflow-hidden relative bg-[#f5f5f1] flex flex-col items-center justify-between">
-      {!isLoading && (
+      {isLoading ? (
+        <div className="h-screen bg-[#f5f5f1] flex items-center justify-center">
+          <div className="text-lg sm:text-xl md:text-2xl text-gray-600">Carregando...</div>
+        </div>
+      ) : (
         <>
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -235,29 +286,12 @@ export default function Dashboard() {
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
                 <div className="space-y-3 sm:space-y-4">
                   {pointsData.map((point) => (
-                    <div 
-                      key={point.name} 
-                      className={`group hover:bg-gray-50 p-2 sm:p-3 rounded-lg transition-colors duration-200 cursor-pointer ${selectedRegion === point.name ? 'bg-gray-50 ring-2 ring-[#2E8B57]' : ''}`}
+                    <RegionCard
+                      key={point.name}
+                      point={point}
+                      isSelected={selectedRegion === point.name}
                       onClick={() => setSelectedRegion(point.name)}
-                    >
-                      <div className="flex items-center space-x-3 sm:space-x-4">
-                        <div className="flex-shrink-0">
-                          <img 
-                            src={point.imgUrl}
-                            alt={point.name} 
-                            className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" 
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 group-hover:text-[#2E8B57] transition-colors duration-200 text-xs sm:text-sm md:text-base">
-                            {point.name}
-                          </h3>
-                          <p className="text-gray-500 text-xs mt-0.5 sm:mt-1">
-                            {point.workers.toLocaleString()} assistentes sociais.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    />
                   ))}
                 </div>
               </div>
@@ -277,11 +311,15 @@ export default function Dashboard() {
             <Globe
               ref={globeRef as MutableRefObject<GlobeMethods>}
               backgroundColor="rgba(0,0,0,0)"
-              showGlobe={false}
+              globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+              bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+              showGlobe={true}
               showAtmosphere={false}
+              atmosphereColor="#3a228a"
+              atmosphereAltitude={0.25}
               polygonsData={landPolygons}
-              polygonCapColor={() => '#2E8B57'}
-              polygonSideColor={() => 'rgba(0,0,0,0)'}
+              polygonCapColor={() => '#ffffff00'}
+              polygonSideColor={() => '#ffffff00'}
               htmlElementsData={pointsData}
               htmlElement={htmlElement}
               htmlLat="lat"
