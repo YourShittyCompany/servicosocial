@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, MutableRefObject } from 'react';
+import { useState, useEffect, useRef, MutableRefObject, useMemo } from 'react';
 import Globe, { GlobeMethods } from 'react-globe.gl';
 import { feature } from 'topojson-client';
 import { Feature, Geometry } from 'geojson';
@@ -60,7 +60,7 @@ const RegionCard = ({ point, isSelected, onClick }: {
 );
 
 export default function Dashboard() {
-  const pointsData: PointData[] = [
+  const pointsData = useMemo<PointData[]>(() => [
     {
       name: 'América do Norte',
       lat: 40,
@@ -115,7 +115,7 @@ export default function Dashboard() {
       size: 0.7,
       imgUrl: '/aupi.png'
     }
-  ];
+  ], []);
 
   const [isLoading, setIsLoading] = useState(true);
   const [landPolygons, setLandPolygons] = useState<Feature<Geometry>[]>([]);
@@ -303,7 +303,7 @@ export default function Dashboard() {
 
           <div className="w-full h-[calc(100vh-32px)] sm:h-[calc(100vh-40px)] md:h-[calc(100vh-60px)] lg:h-[calc(100vh-80px)] flex items-center justify-center relative">
             <div className="absolute z-0 text-[32px] sm:text-[40px] md:text-[60px] lg:text-[100px] xl:text-[160px] roboto-medium text-[#f0eae3] select-none text-center px-2 sm:px-4">
-              BREVEMENTE
+              SERVIÇO SOCIAL
             </div>
             <Globe
               ref={globeRef as MutableRefObject<GlobeMethods>}
