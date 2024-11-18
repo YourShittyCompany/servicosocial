@@ -122,26 +122,38 @@ export default function Dashboard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const globeRef = useRef<GlobeElement | null>(null);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
+  // Função para calcular o tamanho baseado na largura da janela
+  const calculateSize = (width: number) => {
+    if (width === 0) return 20; // valor padrão
+    return width < 480 ? 16 : 
+           width < 768 ? 18 : 
+           width < 1024 ? 20 : 
+           24;
+  };
+
+  // Função para calcular a altitude baseada na largura da janela
+  const calculateAltitude = (width: number) => {
+    if (width === 0) return 2.5; // valor padrão
+    return width < 480 ? 4 : 
+           width < 768 ? 3.5 : 
+           width < 1024 ? 3 : 
+           2.5;
+  };
+
+  // Efeito para inicializar e atualizar o tamanho da janela
   useEffect(() => {
     const handleResize = () => {
-      const width = window.innerWidth;
-      
-      if (globeRef.current) {
-        const altitude = width < 480 ? 4 : 
-                        width < 768 ? 3.5 : 
-                        width < 1024 ? 3 : 
-                        2.5;
-        
-        globeRef.current.pointOfView({ 
-          lat: 0,
-          lng: 0,
-          altitude 
-        });
-      }
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
     };
 
+    // Inicialização
     handleResize();
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -180,8 +192,9 @@ export default function Dashboard() {
       });
   }, []);
 
+  // Efeito para configurar o Globe após a montagem
   useEffect(() => {
-    if (globeRef.current) {
+    if (globeRef.current && windowSize.width > 0) {
       const globe = globeRef.current;
       
       const controls = globe.controls();
@@ -190,48 +203,33 @@ export default function Dashboard() {
       controls.enableRotate = true;
       controls.enablePan = false;
       
-      const width = window.innerWidth;
-      const altitude = width < 480 ? 4 : 
-                      width < 768 ? 3.5 : 
-                      width < 1024 ? 3 : 
-                      2.5;
-      
       globe.pointOfView({ 
         lat: 0,
         lng: 0,
-        altitude
+        altitude: calculateAltitude(windowSize.width)
       });
     }
-  }, []);
+  }, [windowSize.width]);
 
+  // Efeito para atualizar a visualização quando uma região é selecionada
   useEffect(() => {
-    if (globeRef.current && selectedRegion) {
+    if (globeRef.current && selectedRegion && windowSize.width > 0) {
       const selectedPoint = pointsData.find(point => point.name === selectedRegion);
       if (selectedPoint) {
-        const width = window.innerWidth;
-        const altitude = width < 480 ? 3 : 
-                        width < 768 ? 2.5 : 
-                        width < 1024 ? 2 : 
-                        1.5;
-        
         globeRef.current.pointOfView({
           lat: selectedPoint.lat,
           lng: selectedPoint.lng,
-          altitude
+          altitude: calculateAltitude(windowSize.width) * 0.6
         });
       }
     }
-  }, [selectedRegion, pointsData]);
+  }, [selectedRegion, pointsData, windowSize.width]);
 
   const htmlElement = (d: object): HTMLElement => {
     const point = d as PointData;
     const el = document.createElement('div');
     
-    const width = window.innerWidth;
-    const size = width < 480 ? 16 : 
-                 width < 768 ? 18 : 
-                 width < 1024 ? 20 : 
-                 24;
+    const size = calculateSize(windowSize.width);
     
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
@@ -253,7 +251,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen w-full m-0 overflow-hidden relative bg-[#f5f5f1] flex flex-col items-center justify-between">
-      {isLoading ? (
+      {isLoading || windowSize.width === 0 ? (
         <div className="h-screen bg-[#f5f5f1] flex items-center justify-center">
           <div className="text-lg sm:text-xl md:text-2xl text-gray-600">Carregando...</div>
         </div>
