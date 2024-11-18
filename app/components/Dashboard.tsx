@@ -1,77 +1,322 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Globe from 'react-globe.gl';
+import { feature } from 'topojson-client';
+import { GeoJsonProperties } from 'geojson';
+
+interface PointData {
+  name: string;
+  lat: number;
+  lng: number;
+  workers: number;
+  color: string;
+  size: number;
+  imgUrl: string;
+}
+
+interface WindowSize {
+  width: number;
+  height: number;
+}
+
+interface GlobeElement {
+  pointOfView: (config: { lat: number; lng: number; altitude: number }) => void;
+  controls: () => {
+    enabled: boolean;
+    enableZoom: boolean;
+    enableRotate: boolean;
+    enablePan: boolean;
+  };
+}
 
 export default function Dashboard() {
-  const [year] = useState<string>(new Date().getFullYear().toString());
-  const [isMobile, setIsMobile] = useState(false);
+  const pointsData: PointData[] = [
+    {
+      name: 'América do Norte',
+      lat: 40,
+      lng: -100,
+      workers: 650000,
+      color: '#4169E1',
+      size: 1,
+      imgUrl: '/arcpi.png'
+    },
+    {
+      name: 'América do Sul', 
+      lat: -15,
+      lng: -60,
+      workers: 180000,
+      color: '#32CD32',
+      size: 1,
+      imgUrl: '/bzpi.png'
+    },
+    {
+      name: 'Europa',
+      lat: 50,
+      lng: 10,
+      workers: 800000,
+      color: '#FFD700',
+      size: 0.6,
+      imgUrl: '/epi.png'
+    },
+    {
+      name: 'África',
+      lat: 0,
+      lng: 20,
+      workers: 100000,
+      color: '#FF4500',
+      size: 1,
+      imgUrl: '/afpi.png'
+    },
+    {
+      name: 'Ásia',
+      lat: 35,
+      lng: 100,
+      workers: 450000,
+      color: '#9370DB',
+      size: 0.8,
+      imgUrl: '/aspi.png'
+    },
+    {
+      name: 'Oceânia',
+      lat: -25,
+      lng: 135,
+      workers: 30000,
+      color: '#20B2AA',
+      size: 0.7,
+      imgUrl: '/aupi.png'
+    }
+  ];
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [landPolygons, setLandPolygons] = useState<GeoJSON.Feature[]>([]);
+  const [windowSize, setWindowSize] = useState<WindowSize>({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0
+  });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const globeRef = useRef<GlobeElement | null>(null);
+
+  // Atualiza o tamanho da janela e ajusta o globo para dispositivos móveis
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      setWindowSize({ width, height });
+      
+      if (globeRef.current) {
+        // Ajusta altitude baseado no tamanho da tela
+        const altitude = width < 480 ? 4 : // Telefones
+                        width < 768 ? 3.5 : // Tablets pequenos
+                        width < 1024 ? 3 : // Tablets grandes
+                        2.5; // Desktop
+        
+        globeRef.current.pointOfView({ 
+          lat: 0,
+          lng: 0,
+          altitude 
+        });
+      }
     };
 
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-
-    return () => window.removeEventListener('resize', checkIfMobile);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const blinkingDots = (
-    <span className="blinking-dots inline-block">
-      <span className="dot opacity-0 animate-[blink_1.5s_infinite_0.3s]">.</span>
-      <span className="dot opacity-0 animate-[blink_1.5s_infinite_0.6s]">.</span>
-      <span className="dot opacity-0 animate-[blink_1.5s_infinite_0.9s]">.</span>
-    </span>
-  );
+  useEffect(() => {
+    fetch('//unpkg.com/world-atlas/land-110m.json')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Falha ao carregar dados do mapa');
+        }
+        return res.json();
+      })
+      .then(landTopo => {
+        const features = feature(landTopo, landTopo.objects.land) as unknown as { features: GeoJSON.Feature<any, GeoJsonProperties>[] };
+        setLandPolygons(features.features);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar mapa:', error);
+        setIsLoading(false);
+      });
+  }, []);
 
-  if (isMobile) {
+  useEffect(() => {
+    if (globeRef.current) {
+      const globe = globeRef.current;
+      
+      // Configura controles otimizados para touch
+      const controls = globe.controls();
+      controls.enabled = true;
+      controls.enableZoom = true;
+      controls.enableRotate = true;
+      controls.enablePan = false;
+      
+      // Ajusta sensibilidade do touch
+      const width = window.innerWidth;
+      const altitude = width < 480 ? 4 : 
+                      width < 768 ? 3.5 : 
+                      width < 1024 ? 3 : 
+                      2.5;
+      
+      globe.pointOfView({ 
+        lat: 0,
+        lng: 0,
+        altitude
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (globeRef.current && selectedRegion) {
+      const selectedPoint = pointsData.find(point => point.name === selectedRegion);
+      if (selectedPoint) {
+        const width = window.innerWidth;
+        const altitude = width < 480 ? 3 : 
+                        width < 768 ? 2.5 : 
+                        width < 1024 ? 2 : 
+                        1.5;
+        
+        globeRef.current.pointOfView({
+          lat: selectedPoint.lat,
+          lng: selectedPoint.lng,
+          altitude
+        });
+      }
+    }
+  }, [selectedRegion]);
+
+  const htmlElement = (d: any): HTMLElement => {
+    const point = d as PointData;
+    const el = document.createElement('div');
+    
+    // Ajusta tamanho dos ícones para diferentes dispositivos
+    const width = window.innerWidth;
+    const size = width < 480 ? 16 : // Telefones
+                 width < 768 ? 18 : // Tablets pequenos
+                 width < 1024 ? 20 : // Tablets grandes
+                 24; // Desktop
+    
+    el.innerHTML = `<img src="${point.imgUrl}" style="width: ${size}px; height: ${size}px;" alt="${point.name}" />`;
+    el.style.pointerEvents = 'auto';
+    el.style.cursor = 'pointer';
+    el.style.touchAction = 'manipulation'; // Melhora resposta ao toque
+    el.addEventListener('click', () => {
+      setSelectedRegion(point.name);
+      setIsMenuOpen(true);
+    });
+    return el;
+  };
+
+  if (isLoading) {
     return (
-      <div
-        className="h-screen m-0 overflow-hidden relative select-none"
-        onContextMenu={(e) => e.preventDefault()}
-      >
-        <div className="black h-1/2 bg-[#22c55e] p-0 relative">
-          <div className="coming_soon w-[85%] ml-[5%] absolute bottom-[-20px] text-white font-['Josefin_Slab'] text-[72px] z-10">
-            BREVE
-          </div>
-        </div>
-
-        <div className="white h-1/2 bg-white p-0 relative">
-          <div className="coming_soon w-[85%] ml-[5%] absolute top-[-4px] text-[#0d9488] font-['Josefin_Slab'] text-[72px] z-10">
-            MENTE
-            {blinkingDots}
-          </div>
-        </div>
-
-        <div className="absolute bottom-4 w-full text-center text-sm text-gray-500">
-          Copyright © {year} Serviço Social. Todos os direitos reservados.
-        </div>
+      <div className="h-screen bg-[#f5f5f1] flex items-center justify-center">
+        <div className="text-lg sm:text-xl md:text-2xl text-gray-600">Carregando...</div>
       </div>
     );
   }
 
   return (
-    <div 
-      className="h-screen m-0 overflow-hidden relative select-none"
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <div className="black h-1/2 bg-[#22c55e] p-0 relative">
-        <div className="coming_soon w-[85%] ml-[5%] absolute bottom-[-40px] text-white font-['Josefin_Slab'] text-[160px] lg:text-[160px] md:text-[120px] sm:text-[72px] xs:text-[56px] sm:bottom-[-18px] z-10">
-          BREVE
-        </div>
-      </div>
+    <div className="min-h-screen w-full m-0 overflow-hidden relative bg-[#f5f5f1] flex flex-col items-center justify-between">
+      {!isLoading && (
+        <>
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="fixed top-2 right-2 z-50 p-2 sm:p-3 rounded-md hover:bg-[#f0eae3] transition-colors duration-300 bg-white shadow-md md:top-4 md:right-4"
+            aria-label="Abrir menu"
+          >
+            <div className={`w-4 sm:w-5 h-0.5 bg-[#2E8B57] mb-1 sm:mb-1.5 transition-transform duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}/>
+            <div className={`w-4 sm:w-5 h-0.5 bg-[#2E8B57] mb-1 sm:mb-1.5 transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}/>
+            <div className={`w-4 sm:w-5 h-0.5 bg-[#2E8B57] transition-transform duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}/>
+          </button>
 
-      <div className="white h-1/2 bg-white p-0 relative">
-        <div className="coming_soon w-[85%] ml-[5%] absolute top-[-8px] text-[#0d9488] font-['Josefin_Slab'] text-[160px] lg:text-[160px] md:text-[120px] sm:text-[72px] xs:text-[56px] sm:top-[-4px] z-10">
-          MENTE
-          {blinkingDots}
-        </div>
-      </div>
+          {isMenuOpen && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300"
+              onClick={() => setIsMenuOpen(false)}
+            />
+          )}
 
-      <div className="absolute bottom-4 w-full text-center text-sm text-gray-500">
-        Copyright © {year} Serviço Social. Todos os direitos reservados.
-      </div>
+          <div className={`fixed top-0 right-0 h-full bg-white shadow-xl transition-transform duration-300 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} z-40 w-full sm:w-72 md:w-80 overflow-hidden`}>
+            <div className="h-full flex flex-col">
+              <div className="p-3 sm:p-4 md:p-6 border-b border-gray-100">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#2E8B57]">Assistentes Sociais</h2>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">Distribuição global de assistentes sociais.</p>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
+                <div className="space-y-3 sm:space-y-4">
+                  {pointsData.map((point) => (
+                    <div 
+                      key={point.name} 
+                      className={`group hover:bg-gray-50 p-2 sm:p-3 rounded-lg transition-colors duration-200 cursor-pointer ${selectedRegion === point.name ? 'bg-gray-50 ring-2 ring-[#2E8B57]' : ''}`}
+                      onClick={() => setSelectedRegion(point.name)}
+                    >
+                      <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className="flex-shrink-0">
+                          <img 
+                            src={point.imgUrl}
+                            alt={point.name} 
+                            className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" 
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900 group-hover:text-[#2E8B57] transition-colors duration-200 text-xs sm:text-sm md:text-base">
+                            {point.name}
+                          </h3>
+                          <p className="text-gray-500 text-xs mt-0.5 sm:mt-1">
+                            {point.workers.toLocaleString()} assistentes sociais.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-2 sm:p-3 md:p-4 border-t border-gray-100 bg-gray-50">
+                <p className="text-[10px] sm:text-xs text-center text-gray-500">
+                  Dados baseados em relatórios oficiais da IFSW.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full h-[calc(100vh-32px)] sm:h-[calc(100vh-40px)] md:h-[calc(100vh-60px)] lg:h-[calc(100vh-80px)] flex items-center justify-center relative">
+            <div className="absolute z-0 text-[32px] sm:text-[40px] md:text-[60px] lg:text-[100px] xl:text-[160px] roboto-medium text-[#f0eae3] select-none text-center px-2 sm:px-4">
+              BREVEMENTE
+            </div>
+            <Globe
+              ref={globeRef}
+              backgroundColor="rgba(0,0,0,0)"
+              showGlobe={false}
+              showAtmosphere={false}
+              polygonsData={landPolygons}
+              polygonCapColor={() => '#2E8B57'}
+              polygonSideColor={() => 'rgba(0,0,0,0)'}
+              htmlElementsData={pointsData}
+              htmlElement={htmlElement}
+              htmlLat="lat"
+              htmlLng="lng"
+              htmlAltitude={0.01}
+            />
+          </div>
+
+          <footer className="w-full bg-white py-4 px-6 border-t border-gray-100 fixed bottom-0">
+            <div className="container mx-auto">
+              <div className="flex justify-center">
+                <div className="text-sm text-gray-600">
+                  © {new Date().getFullYear()} Serviço Social. Todos os direitos reservados.
+                </div>
+              </div>
+            </div>
+          </footer>
+        </>
+      )}
     </div>
   );
 }

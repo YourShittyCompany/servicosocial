@@ -12,6 +12,15 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      keyframes: {
+        spin: {
+          "0%": { transform: "rotateX(0deg)" },
+          "100%": { transform: "rotateX(360deg)" },
+        },
+      },
+      animation: {
+        spin: "spin 30s infinite linear",
+      },
     },
   },
   plugins: [],

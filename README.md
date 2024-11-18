@@ -4,21 +4,41 @@ O Portal dos Assistentes de Serviço Social é uma plataforma online dedicada ex
 
 ### Características Principais
 
-- Interface intuitiva e moderna
-- Conteúdo especializado para assistentes sociais
-- Recursos profissionais atualizados
-- Foco na comunidade portuguesa de Serviço Social
+- Interface intuitiva e moderna com design responsivo
+- Sistema de autenticação e perfis de utilizador
+- Área de recursos e documentação profissional
+- Fórum de discussão para a comunidade
+- Calendário de eventos e formações
+- Blog com artigos especializados
+- Diretório de profissionais
 
 ### Tecnologias Utilizadas
 
-- Next.js
-- React
+- Next.js 13 com App Router
+- React 18
 - Tailwind CSS
 - TypeScript
+- Prisma
+- PostgreSQL
+- NextAuth.js
+- Vercel
 
 ### Estado Atual
 
-O portal encontra-se em desenvolvimento ativo, com lançamento previsto para breve. A primeira fase incluirá funcionalidades essenciais para a comunidade de assistentes sociais.
+O portal encontra-se em fase beta com as seguintes funcionalidades implementadas:
+- Sistema de autenticação completo
+- Perfis de utilizador básicos
+- Layout responsivo principal
+- Estrutura inicial do fórum
+- Base de dados configurada
+
+### Próximos Passos
+
+- Implementação do sistema de blog
+- Desenvolvimento do fórum de discussão
+- Criação do diretório de profissionais
+- Sistema de notificações
+- Área de recursos e documentação
 
 ### Objetivos
 
@@ -26,3 +46,4 @@ O portal encontra-se em desenvolvimento ativo, com lançamento previsto para bre
 - Disponibilizar recursos e ferramentas atualizadas
 - Promover o desenvolvimento profissional contínuo
 - Facilitar a partilha de conhecimentos e experiências
+- Melhorar a visibilidade da profissão em Portugal
