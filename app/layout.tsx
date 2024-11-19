@@ -1,16 +1,13 @@
-import type { Metadata } from 'next'
 import './globals.css'
 import { Josefin_Slab } from 'next/font/google'
+import { metadata } from './metadata'
 
 const josefinSlab = Josefin_Slab({
   weight: '700',
   subsets: ['latin'],
 })
 
-export const metadata: Metadata = {
-  title: 'Serviço Social',
-  description: 'O Verdadeiro Portal dos Assistentes Sociais.',
-}
+export { metadata }
 
 export default function RootLayout({
   children,

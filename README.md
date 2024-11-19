@@ -1,58 +1,29 @@
-## Portal dos Assistentes de Serviço Social
+# ServiçoSocial.pt 🌍
 
-O Portal dos Assistentes de Serviço Social é uma plataforma online dedicada exclusivamente aos profissionais de Serviço Social em Portugal. Este espaço foi concebido para ser o ponto de encontro digital da comunidade de assistentes sociais, oferecendo recursos, informações e ferramentas essenciais para o desenvolvimento profissional.
+Portal líder em Portugal dedicado aos profissionais de Serviço Social.
 
-### Características Principais
+## Sobre o Projeto
 
-- Interface intuitiva e moderna com design responsivo
-- Sistema de autenticação e perfis de utilizador personalizáveis
-- Área de recursos e documentação profissional atualizada
-- Fórum de discussão interativo para a comunidade
-- Calendário de eventos, formações e webinars
-- Blog com artigos especializados e casos de estudo
-- Diretório de profissionais com pesquisa avançada
-- Sistema de mensagens privadas entre utilizadores
-- Área de ofertas de emprego na área social
+ServiçoSocial.pt é uma plataforma web moderna desenvolvida com Next.js que oferece ferramentas profissionais, recursos e gestão de casos para assistentes sociais em Portugal e comunidades portuguesas no exterior.
+
+### Principais Funcionalidades
+
+- 🌐 Dashboard interativo com visualização global de assistentes sociais
+- 🎓 Mapeamento de universidades com cursos de Serviço Social em Portugal
+- 📱 Design responsivo e adaptável a todos os dispositivos
+- 🔒 Implementação robusta de segurança e proteção de dados
+- 📊 Análise estatística e relatórios personalizados
+- 🤝 Rede de networking profissional
+- 📚 Biblioteca de recursos e documentação
+- 🔍 Sistema avançado de pesquisa
 
 ### Tecnologias Utilizadas
 
-- Next.js 14 com App Router
-- React 18
-- Tailwind CSS
+- Next.js 13+
 - TypeScript
-- Prisma
-- PostgreSQL
+- Tailwind CSS
+- WebGL para visualizações 3D
+- React Three Fiber
+- MongoDB
+- Prisma ORM
 - NextAuth.js
-- Vercel
-- tRPC
-- Zod
-- React Query
-
-### Estado Atual
-
-O portal encontra-se em fase de produção com as seguintes funcionalidades implementadas:
-- Sistema de autenticação completo com múltiplos providers
-- Perfis de utilizador detalhados com personalização
-- Layout responsivo otimizado
-- Fórum de discussão funcional
-- Base de dados otimizada e indexada
-- Sistema de blog implementado
-- API RESTful documentada
-
-### Próximos Passos
-
-- Implementação de chat em tempo real
-- Sistema de mentoria entre profissionais
-- Integração com plataformas de formação online
-- Desenvolvimento de app mobile
-- Sistema de certificados digitais
-- Marketplace de recursos profissionais
-
-### Objetivos
-
-- Criar uma comunidade profissional forte, unida e colaborativa
-- Disponibilizar recursos e ferramentas atualizadas e relevantes
-- Promover o desenvolvimento profissional contínuo através de formação
-- Facilitar a partilha de conhecimentos e experiências práticas
-- Melhorar a visibilidade e reconhecimento da profissão em Portugal
-- Fomentar a inovação nas práticas de serviço social
