@@ -63,19 +63,5 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-    bingBot: {
-      index: true,
-      follow: true,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
-    },
-    slurp: { // Bot do Yahoo
-      index: true,
-      follow: true,
-    },
-    duckduckbot: {
-      index: true,
-      follow: true,
-    }
   },
 }
