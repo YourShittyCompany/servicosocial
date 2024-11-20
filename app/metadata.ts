@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: 'O Portal dos assistentes de Serviço Social.',
-  keywords: ['serviço social', 'serviço social dges', 'serviço social porto', 'serviço social coimbra', 'serviço social lisboa', 'serviço social utad', 'serviço social leiria', 'serviço social viseu', 'serviço social beja', 'serviço social iscte', 'serviço social mestrado', 'isssp- valor das propinas', 'ISSSP privado ou Público', 'ISSSP propinas licenciatura', 'licenciatura serviço social (pós-laboral) porto', 'Isssp mestrados', 'pós-graduação serviço social', 'Instituto Superior de Serviço Social do Porto', 'ISSSP propinas mestrado'],
+  keywords: ['serviço social', 'serviço social dges', 'serviço social porto', 'serviço social coimbra', 'serviço social lisboa', 'serviço social utad', 'serviço social leiria', 'serviço social viseu', 'serviço social beja', 'serviço social iscte', 'serviço social mestrado', 'dges serviço social pós-laboral', 'licenciatura serviço social (pós-laboral)', 'licenciatura serviço social (pós-laboral) porto', 'licenciatura em serviço social e-learning', 'Serviço Social, o que faz', 'Direito dges', 'Serviço Social', 'Licenciatura Serviço Social', 'isssp- valor das propinas', 'ISSSP privado ou Público', 'ISSSP propinas licenciatura', 'licenciatura serviço social (pós-laboral) porto', 'Isssp mestrados', 'pós-graduação serviço social', 'Instituto Superior de Serviço Social do Porto', 'ISSSP propinas mestrado'],
   
   // Definições do OpenGraph
   openGraph: {
@@ -49,4 +49,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  viewport: 'width=device-width, initial-scale=1', 
+  themeColor: '#ffffff',                      
 }

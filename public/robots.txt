@@ -2,6 +2,11 @@
 
 User-agent: *
 Allow: /
+Disallow: /*.pdf$
+Disallow: /search
+Disallow: /*?s=*
+Disallow: /*?p=*
+Crawl-delay: 15
 Sitemap: https://serviçosocial.pt/sitemap.xml
 
 # Googlebot - Bot do Google
@@ -25,5 +30,67 @@ User-agent: YandexBot
 Allow: /
 
 # Bloqueio de pastas privadas.
-# Disallow: /admin/
-# Disallow: /private/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /includes/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /*.sql$
+Disallow: /*.zip$
+Disallow: /*.gz$
+Disallow: /*.log$
+Disallow: /error_log
+Disallow: /.htaccess
+
+# Bloqueio de acesso a arquivos de configuração.
+Disallow: /config/
+
+# Bloqueio de acesso a diretórios de "backup"
+Disallow: /backup/
+
+# Bloqueio de acesso a diretórios de "uploads"
+Disallow: /uploads/
+
+# Bloqueio de acesso a arquivos temporários.
+Disallow: /temp/
+
+# Bloqueio de acesso a "URL's" com parâmetros específicos.
+Disallow: /*?session_id=*  # Bloqueia "URL's" com o parâmetro session_id.
+Disallow: /*?token=*       # Bloqueia "URL's" com o parâmetro token.
+
+# Permitir o acesso a uma pasta específica dentro de um diretório bloqueado
+Allow: /public/            # Permite o acesso ao diretório "public" mesmo que o diretório principal esteja bloqueado
+
+# Bloqueio de acesso a arquivos de teste ou desenvolvimento.
+Disallow: /test/
+Disallow: /dev/
+
+# Bloqueio de acesso a arquivos de documentação.
+Disallow: /docs/
+
+# Bloqueio de acesso a "URL's" com parâmetros de rastreamento.
+Disallow: /*?utm_*          # Bloqueia "URL's" com parâmetros de rastreamento UTM.
+Disallow: /*?ref=*          # Bloqueia "URL's" com parâmetros de referência.
+
+# Bloqueio de acesso a arquivos de mídia que não devem ser indexados.
+Disallow: /*.mp3$           # Bloqueia arquivos de áudio.
+Disallow: /*.mp4$           # Bloqueia arquivos de vídeo.
+
+# Instruções para motores de busca específicos
+User-agent: Googlebot
+Disallow: /private/        # Bloqueia o "Googlebot" de acessar as pastas privadas.
+
+User-agent: Bingbot
+Disallow: /private/        # Bloqueia o "Bingbot" de acessar as pastas privadas.
+
+User-agent: DuckDuckGo
+Disallow: /private/        # Bloqueia o "DuckDuckGo" de acessar as pastas privadas.
+
+User-agent: Brave
+Disallow: /private/        # Bloqueia o "Brave" de acessar as pastas privadas.
+
+User-agent: Yandex
+Disallow: /private/        # Bloqueia o "Yandex" de acessar as pastas privadas.
+
+User-agent: *
+Disallow: /private/        # Bloqueia todos os outros bots de acessar a pasta privada

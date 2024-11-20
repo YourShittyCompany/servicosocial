@@ -1,29 +1,25 @@
-# ServiçoSocial.pt 🌍
+# Serviço Social 🌍
+## serviçosocial.pt
 
-Portal líder em Portugal dedicado aos profissionais de Serviço Social.
+Portal dedicado aos profissionais de Serviço Social.
 
-## Sobre o Projeto
+### Sobre o Projeto
 
-ServiçoSocial.pt é uma plataforma web moderna desenvolvida com Next.js que oferece ferramentas profissionais, recursos e gestão de casos para assistentes sociais em Portugal e comunidades portuguesas no exterior.
+O Portal "serviçosocial.pt" é uma plataforma web desenvolvida em mente para os assistentes de serviço social com as mais recentes tecnologias para acomodar os desafios do "Web 3.0". Esta oferece ferramentas profissionais, recursos e gestão de casos para assistentes sociais em Portugal e comunidades portuguesas no exterior.
 
-### Principais Funcionalidades
+#### Principais Funcionalidades
 
 - 🌐 Dashboard interativo com visualização global de assistentes sociais
 - 🎓 Mapeamento de universidades com cursos de Serviço Social em Portugal
 - 📱 Design responsivo e adaptável a todos os dispositivos
 - 🔒 Implementação robusta de segurança e proteção de dados
-- 📊 Análise estatística e relatórios personalizados
-- 🤝 Rede de networking profissional
-- 📚 Biblioteca de recursos e documentação
-- 🔍 Sistema avançado de pesquisa
 
-### Tecnologias Utilizadas
+#### Tecnologias Utilizadas
 
-- Next.js 13+
-- TypeScript
-- Tailwind CSS
-- WebGL para visualizações 3D
-- React Three Fiber
-- MongoDB
-- Prisma ORM
-- NextAuth.js
+- Next.js (Versão 13+);
+- TypeScript;
+- ESLint;
+- Tailwind CSS;
+- WebGL;
+- Three.js;
+- React Three Fiber.
