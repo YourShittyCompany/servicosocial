@@ -13,8 +13,8 @@ export const metadata: Metadata = {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
-  description: 'Portal líder em Portugal para assistentes de Serviço Social. Ferramentas profissionais, recursos e gestão de casos para assistentes sociais.',
-  keywords: ['social', 'work', 'social work', 'social assistant', 'assistant', 'servico', 'social', 'servico social', 'serviço social', 'servicosocial', 'serviçosocial', 'servicosocial.pt', 'serviçosocial.pt', 'gestão', 'management', 'assistência', 'assistência social', 'assistentes', 'assistentes sociais', 'dashboard', 'assistente social portugal', 'portal serviço social', 'gestão casos sociais', 'software serviço social', 'plataforma assistentes sociais'],
+  description: 'O Portal líder em Portugal para assistentes de Serviço Social.',
+  keywords: ['serviço social', 'serviço social dges', 'serviço social porto', 'serviço social coimbra', 'serviço social lisboa', 'serviço social utad', 'serviço social leiria', 'serviço social viseu', 'serviço social beja', 'serviço social iscte', 'serviço social mestrado', 'servicosocial.pt', 'serviçosocial.pt', 'gestão', 'management', 'assistência', 'assistência social', 'assistentes', 'assistentes sociais', 'dashboard', 'assistente social portugal', 'portal serviço social', 'gestão casos sociais', 'software serviço social', 'plataforma assistentes sociais'],
   
   // Definições do OpenGraph
   openGraph: {
