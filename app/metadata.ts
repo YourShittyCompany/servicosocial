@@ -8,13 +8,13 @@ const siteConfig = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL('https://seusite.com'),
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
-  description: 'O Portal líder em Portugal para assistentes de Serviço Social.',
-  keywords: ['serviço social', 'serviço social dges', 'serviço social porto', 'serviço social coimbra', 'serviço social lisboa', 'serviço social utad', 'serviço social leiria', 'serviço social viseu', 'serviço social beja', 'serviço social iscte', 'serviço social mestrado', 'servicosocial.pt', 'serviçosocial.pt', 'gestão', 'management', 'assistência', 'assistência social', 'assistentes', 'assistentes sociais', 'dashboard', 'assistente social portugal', 'portal serviço social', 'gestão casos sociais', 'software serviço social', 'plataforma assistentes sociais'],
+  description: 'O Portal dos assistentes de Serviço Social.',
+  keywords: ['serviço social', 'serviço social dges', 'serviço social porto', 'serviço social coimbra', 'serviço social lisboa', 'serviço social utad', 'serviço social leiria', 'serviço social viseu', 'serviço social beja', 'serviço social iscte', 'serviço social mestrado', 'isssp- valor das propinas', 'ISSSP privado ou Público', 'ISSSP propinas licenciatura', 'licenciatura serviço social (pós-laboral) porto', 'Isssp mestrados', 'pós-graduação serviço social', 'Instituto Superior de Serviço Social do Porto', 'ISSSP propinas mestrado'],
   
   // Definições do OpenGraph
   openGraph: {
@@ -48,20 +48,5 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    nocache: false,
-    noarchive: false,
-    noimageindex: false,
-    notranslate: false,
-    'max-snippet': -1,
-    'max-image-preview': 'large',
-    'max-video-preview': -1,
-    googleBot: {
-      index: true,
-      follow: true,
-      noimageindex: false,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
   },
 }

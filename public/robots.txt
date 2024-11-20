@@ -1,0 +1,29 @@
+# **** Configuração do robots.txt ****
+
+User-agent: *
+Allow: /
+Sitemap: https://serviçosocial.pt/sitemap.xml
+
+# Googlebot - Bot do Google
+User-agent: Googlebot
+Allow: /
+
+# Bingbot - Bot do Bing
+User-agent: Bingbot
+Allow: /
+
+# DuckDuckBot - Bot do DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# BraveBot - Bot do Brave
+User-agent: BraveBot
+Allow: /
+
+# YandexBot - Bot do Yandex
+User-agent: YandexBot
+Allow: /
+
+# Bloqueio de pastas privadas.
+# Disallow: /admin/
+# Disallow: /private/
