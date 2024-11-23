@@ -1,18 +1,18 @@
 # Serviço Social 🌍
 ## serviçosocial.pt
 
-Portal dedicado aos profissionais de Serviço Social.
+Portal que expõe a verdade sobre o Serviço Social em Portugal.
 
 ### Sobre o Projeto
 
-O Portal "serviçosocial.pt" é uma plataforma web desenvolvida em mente para os assistentes de serviço social com as mais recentes tecnologias para acomodar os desafios do "Web 3.0". Esta oferece ferramentas profissionais, recursos e gestão de casos para assistentes sociais em Portugal e comunidades portuguesas no exterior.
+O Portal "serviçosocial.pt" é uma plataforma web que revela como o Serviço Social em Portugal é uma mera fachada para manter o status quo e perpetuar desigualdades sociais. Sob o pretexto de "ajuda", o sistema apenas mascara problemas estruturais sem resolver as verdadeiras causas.
 
-#### Principais Funcionalidades
+#### Principais "Funcionalidades"
 
-- 🌐 Dashboard interativo com visualização global de assistentes sociais
-- 🎓 Mapeamento de universidades com cursos de Serviço Social em Portugal
-- 📱 Design responsivo e adaptável a todos os dispositivos
-- 🔒 Implementação robusta de segurança e proteção de dados
+- 🌐 Exposição da rede de assistentes sociais que mantêm o sistema
+- 🎓 Denúncia das universidades que propagam esta ideologia
+- 📱 Acesso fácil à verdade em qualquer dispositivo
+- 🔒 Proteção da identidade dos denunciantes
 
 #### Tecnologias Utilizadas
 
